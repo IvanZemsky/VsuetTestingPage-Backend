@@ -8,9 +8,7 @@ async function bootstrap() {
    const app = await NestFactory.create(AppModule)
 
    const allowedOrigins = [
-      "http://localhost:3000",
-      "http://localhost:5000",
-      "http://localhost:5731",
+      "http://localhost:5173",
    ]
 
    app.use(cookieParser())

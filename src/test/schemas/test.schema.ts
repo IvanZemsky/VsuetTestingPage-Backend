@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { ApiProperty } from "@nestjs/swagger"
 import { HydratedDocument } from "mongoose"
+import { Tag, Department, Subject, Qualification } from "../types/types"
 
 @Schema({ collection: "tests", versionKey: false })
 export class Test {
@@ -33,21 +34,42 @@ export class Test {
 
    @ApiProperty({
       example: 50,
-      description: "Максимальное число очков",
+      description: "Вступительные испытания",
    })
    @Prop({ required: true })
-   maxResult: number
+   entranceTests: Subject[]
+
+   @ApiProperty({
+      example: "09.02.07",
+      description: "Код специальности",
+   })
+   @Prop({ required: true })
+   specializationCode: string
+
+   @ApiProperty({
+      example: 50,
+      description: "Теги специальности",
+   })
+   @Prop({ required: true })
+   tags: Tag[]
+
+   @ApiProperty({
+      example: "УИТС",
+      description: "Факультет",
+   })
+   @Prop({ required: true })
+   department: Department
+
+   @ApiProperty({
+      example: "Бакалавриат",
+      description: "Квалификация",
+   })
+   @Prop({ required: true })
+   qualification: Qualification
 
    @ApiProperty({ example: 500, description: "Количество прохождений" })
    @Prop()
    passes: number
-
-   @ApiProperty({
-      example: "2024-08-25T10:03:46.000+00:00",
-      description: "Дата создания теста",
-   })
-   @Prop({ required: true })
-   date: string
 }
 
 export type TestDocument = HydratedDocument<Test>

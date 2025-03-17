@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { ApiProperty } from "@nestjs/swagger"
-import { HydratedDocument } from "mongoose"
-import { Tag, Department, Subject, Qualification } from "../types/types"
+import mongoose, { HydratedDocument } from "mongoose"
+import { Tag, Subject, Qualification } from "../types/types"
+import { Department } from "src/department/department.schema"
+import { Direction } from "src/direction/direction.schema"
 
 @Schema({ collection: "tests", versionKey: false })
 export class Test {
@@ -54,11 +56,18 @@ export class Test {
    tags: Tag[]
 
    @ApiProperty({
-      example: "УИТС",
-      description: "Факультет",
+      description: "ID факультета, к которому относится тест",
+      example: "66cb6fb8ebae2e4b8fffd190",
    })
-   @Prop({ required: true })
+   @Prop({ type: mongoose.Schema.Types.ObjectId })
    department: Department
+
+   @ApiProperty({
+      description: "ID факультета, к которому относится тест",
+      example: "66cb6fb8ebae2e4b8fffd190",
+   })
+   @Prop({ type: mongoose.Schema.Types.ObjectId })
+   direction: Direction
 
    @ApiProperty({
       example: "Бакалавриат",

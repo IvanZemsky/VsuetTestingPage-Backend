@@ -10,8 +10,6 @@ export type Subject =
    | "География"
    | "История"
 
-export type Department = "УИТС" | "ИТ" | "ЭХТ" | "ЭУ" | "Т" | "СПО"
-
 export type Qualification = "Бакалавриат" | "Специалитет" | "Магистратура" | "СПО"
 
 export type Tag = {

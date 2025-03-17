@@ -1,33 +1,35 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { Model, QueryOptions } from "mongoose"
+import { Model, MongooseBaseQueryOptions } from "mongoose"
 import { NotFoundException } from "@nestjs/common"
 import { Test } from "./schemas/test.schema"
 
-export class TestService {
-   constructor(
-      @InjectModel(Test.name) private testModel: Model<Test>,
-   ) {}
+type FilterParams = {
+   search: string
+   department: string
+   direction: string
+   qualification: string
+   entranceTests: string[]
+}
 
-   async getAllTests(
-      search: string,
-      limit: number = 0,
-      page?: number,
-   ): Promise<Test[]> {
+type FullSearchParams = FilterParams & {
+   limit: number
+   page: number
+}
+
+export class TestService {
+   constructor(@InjectModel(Test.name) private testModel: Model<Test>) {}
+
+   async getAllTests(filterParams: FullSearchParams): Promise<Test[]> {
+      const { page, limit, ...options } = filterParams
       const skip = page ? (page > 0 ? page - 1 : 0) * limit : 0
-      const query = this.setQuery(search)
-      const tests = await this.testModel
-         .find(query)
-         .skip(skip)
-         .limit(limit)
-         .lean()
+      const query = this.setQuery(options)
+      const tests = await this.testModel.find(query).skip(skip).limit(limit).lean()
 
       return tests
    }
 
    async getTestById(testId: string) {
-      const test = await this.testModel
-         .findById(testId)
-         .lean()
+      const test = await this.testModel.findById(testId).lean()
 
       if (!test) {
          throw new NotFoundException()
@@ -36,20 +38,35 @@ export class TestService {
       return test
    }
 
-   async getTestCount(search: string): Promise<number> {
-      const query = this.setQuery(search)
+   async getTestCount(options: FullSearchParams): Promise<number> {
+      const query = this.setQuery(options)
       return await this.testModel.countDocuments(query).exec()
    }
 
-   private setQuery(
-      search: string,
-   ): QueryOptions {
-      return {
-         $or: [
-            { description: { $regex: search, $options: "i" } },
-            { name: { $regex: search, $options: "i" } },
-         ],
+   private setQuery(options: FilterParams) {
+      const { search, entranceTests, direction, department, qualification } = options
+      const query: MongooseBaseQueryOptions = {
+         ...(search && {
+            $or: [
+               { description: { $regex: search, $options: "i" } },
+               { name: { $regex: search, $options: "i" } },
+            ],
+         }),
+         ...(entranceTests?.length && {
+            entranceTests: {
+               $all: entranceTests.map((test) => new RegExp(test, "i")),
+            },
+         }),
+         ...(direction && { direction }),
+         ...(department && { department }),
+         ...(qualification && { qualification }),
       }
+
+      if (!entranceTests?.length) {
+         delete query.entranceTests
+      }
+
+      return query
    }
 
    async updatePasses(id: string) {

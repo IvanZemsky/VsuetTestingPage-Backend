@@ -19,20 +19,34 @@ export class TestController {
    ) {}
 
    @Get()
-   async gettests(
+   async getTests(
       @Res() res: Response,
-      @Query("limit") limit?: number,
-      @Query("page") page?: number,
+      @Query("limit") limit: number = 0,
+      @Query("page") page: number,
       @Query("search") search: string = "",
+      @Query("qualification") qualification: string = "",
+      @Query("entrance_tests") entranceTests: string = "",
+      @Query("direction") direction: string = "",
+      @Query("department") department: string = "",
       @Query("only_count") onlyCount: boolean = false,
    ) {
-      const count = await this.testService.getTestCount(search)
+      const filters = {
+         search,
+         limit,
+         page,
+         qualification,
+         entranceTests: entranceTests.length ? entranceTests.split(",") : [],
+         direction,
+         department,
+      }
+
+      const count = await this.testService.getTestCount(filters)
 
       res.setHeader("X-Total-Count", count)
       res.setHeader("Access-Control-Expose-Headers", "X-Total-Count")
 
       if (!onlyCount) {
-         const tests = await this.testService.getAllTests(search, limit, page)
+         const tests = await this.testService.getAllTests(filters)
 
          return res.json(tests)
       }

@@ -7,6 +7,7 @@ import { TestModule } from "./test/test.module"
 import { QuestionsModule } from "./question/question.module"
 import { DepartmentModule } from "./department/department.module"
 import { DirectionModule } from "./direction/direction.module"
+import { SpecializationTagModule } from "./direction-tag/specialization-tag.module"
 
 @Module({
    imports: [
@@ -23,6 +24,7 @@ import { DirectionModule } from "./direction/direction.module"
       AuthModule,
       DepartmentModule,
       DirectionModule,
+      SpecializationTagModule,
    ],
 })
 export class AppModule {}

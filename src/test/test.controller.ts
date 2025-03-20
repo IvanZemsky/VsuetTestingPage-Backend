@@ -80,7 +80,7 @@ export class TestController {
       return questions
    }
 
-   @Patch(":testId/passes/:questionId")
+   @Patch(":testId/passes")
    async incrementPasses(
       @Param("testId") testId: string,
       @Param("questionId") questionId: string,

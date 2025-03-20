@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger"
 import mongoose, { HydratedDocument, ObjectId } from "mongoose"
 import { Answer } from "./types/types"
 import { questionsExample } from "./docs/docs"
-import { Test } from "src/test/schemas/test.schema"
+import { Test } from "src/test/test.schema"
 
 @Schema({ collection: "questions", versionKey: false })
 export class Question {

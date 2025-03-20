@@ -1,7 +1,7 @@
 import { InjectModel } from "@nestjs/mongoose"
 import { Model, MongooseBaseQueryOptions } from "mongoose"
 import { NotFoundException } from "@nestjs/common"
-import { Test } from "./schemas/test.schema"
+import { Test } from "./test.schema"
 
 type FilterParams = {
    search: string
@@ -23,7 +23,12 @@ export class TestService {
       const { page, limit, ...options } = filterParams
       const skip = page ? (page > 0 ? page - 1 : 0) * limit : 0
       const query = this.setQuery(options)
-      const tests = await this.testModel.find(query).skip(skip).limit(limit).lean()
+      const tests = await this.testModel
+         .find(query)
+         .skip(skip)
+         .limit(limit)
+         .populate("tags")
+         .lean()
 
       return tests
    }
@@ -77,7 +82,7 @@ export class TestService {
       )
 
       if (!test) {
-         throw new NotFoundException(`Test with ID "${id}" not found`)
+         throw new NotFoundException(`Test with ID "${id}" was not found`)
       }
 
       return {

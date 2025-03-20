@@ -11,8 +11,3 @@ export type Subject =
    | "История"
 
 export type Qualification = "Бакалавриат" | "Специалитет" | "Магистратура" | "СПО"
-
-export type Tag = {
-   name: string
-   emoji: string
-}
